@@ -27,37 +27,110 @@ TEST(GuesserTest, base)
 }
 TEST(GuesserTest, wrong)
 {
-	Guesser g("test");
-	ASSERT_EQ(g.match("wrong"), false);
+	Guesser g("terminal");
+	ASSERT_EQ(g.match("referred"), false);
 }
 TEST(GuesserTest, extralength)
 {
-	Guesser g("test");
-	ASSERT_EQ(g.match("test_"), false);
+	Guesser g("banana");
+	ASSERT_EQ(g.match("banana_"), false);
 }
 TEST(GuesserTest, preextralength)
 {
-	Guesser g("test");
-	ASSERT_EQ(g.match("_test"), false);
+	Guesser g("preferred");
+	ASSERT_EQ(g.match("_preferred"), false);
 }
 TEST(GuesserTest, lockout)
 {
-	Guesser g("test");
-	ASSERT_EQ(g.match("wrong"), false);
+	Guesser g("gorilla");
+	ASSERT_EQ(g.match("termite"), false);
 	ASSERT_EQ(g.remaining(), 2);
-	ASSERT_EQ(g.match("wrong"), false);
+	ASSERT_EQ(g.match("pigeon"), false);
 	ASSERT_EQ(g.remaining(), 1);
-	ASSERT_EQ(g.match("wrong"), false);
+	ASSERT_EQ(g.match("wren"), false);
 	ASSERT_EQ(g.remaining(), 0);
-	ASSERT_EQ(g.match("test"), false);
+	ASSERT_EQ(g.match("pheasant"), false);
 }
 TEST(GuesserTest, reset)
 {
-	Guesser g("test");
-	ASSERT_EQ(g.match("wrong"), false);
+	Guesser g("litmus");
+	ASSERT_EQ(g.match("rotation"), false);
 	ASSERT_EQ(g.remaining(), 2);
-	ASSERT_EQ(g.match("wrong"), false);
+	ASSERT_EQ(g.match("certainty"), false);
 	ASSERT_EQ(g.remaining(), 1);
-	ASSERT_EQ(g.match("test"), true);
+	ASSERT_EQ(g.match("litmus"), true);
 	ASSERT_EQ(g.remaining(), 3);
+}
+TEST(GuesserTest, longsecret)
+{
+	Guesser g("al;sioku.jedfhnaswk;jldhnfa;kjsdhfa;ljksdhf;ljkasaw;opuiehfi;awpoiehnf;apiuoewwrhnfg;lioukjaewdhnrfguio;aehnrdfgv;iouaehnjdfugijvo;lahnewriuo;jkfghnaWE;oikrlgfvjhnaWI;OERDJHNFGVIo;awsrdhnjfgiou;awejhnmedsrfvg;oikaEWSjnmhsrdifov;'AHJNMWSEESD;OIPRFGVHJNaW:OIKedsfvchjnaio;krewhnfg");
+	ASSERT_EQ(g.match("al;sioku.jedfhnaswk;jldhnfa;kjsdhfa;ljksdhf;ljkasaw;opuiehfi;awpoiehnf;apiuoewwrhnfg;lioukjaewdhnrfguio;aehnrdfgv;iouaehnjdfugijvo;lahnewriuo;jkfghnaWE;oikrlgfvjhnaWI;OERDJHNFGVIo;awsrdhnjfgiou;awejhnmedsrfvg;oikaEWSjnmhsrdifov;'AHJNMWSEESD;OIPRFGVHJNaW:OIKedsfvchjnaio;krewhnfg"), false);
+	ASSERT_EQ(g.match("al;sioku.jedfhnaswk;jldhnfa;kjsd"), true);
+}
+TEST(GuesserTest, longguess)
+{
+	Guesser g("test");
+	ASSERT_EQ(g.match("al;sioku.jedfhnaswk;jldhnfa;kjsdhfa;ljksdhf;ljkasaw;opuiehfi;awpoiehnf;apiuoewwrhnfg;lioukjaewdhnrfguio;aehnrdfgv;iouaehnjdfugijvo;lahnewriuo;jkfghnaWE;oikrlgfvjhnaWI;OERDJHNFGVIo;awsrdhnjfgiou;awejhnmedsrfvg;oikaEWSjnmhsrdifov;'AHJNMWSEESD;OIPRFGVHJNaW:OIKedsfvchjnaio;krewhnfg"), false);
+}
+TEST(GuesserTest, multGuessRem)
+{
+	Guesser g("horticulture");
+	Guesser g2("test");
+	ASSERT_EQ(g.match("awsefh"), false);
+	ASSERT_EQ(g.remaining(), 2);
+	ASSERT_EQ(g2.remaining(), 3);
+	ASSERT_EQ(g2.match("asddjc"), false);
+}
+TEST(GuesserTest, emptyguess)
+{
+	Guesser g("test");
+	ASSERT_EQ(g.match(""), false);
+}
+TEST(GuesserTest, emptysecret)
+{
+	Guesser g("");
+	ASSERT_EQ(g.match("test"), false);
+	ASSERT_EQ(g.match(""), true);
+}
+TEST(GuesserTest, emptyboth)
+{
+	Guesser g("");
+	ASSERT_EQ(g.match(""), true);
+}
+TEST(GuesserTest, close)
+{
+	Guesser g("test");
+	ASSERT_EQ(g.match("tesp"), false);
+}
+TEST(GuesserTest, closeButWhitespace)
+{
+	Guesser g("test");
+	ASSERT_EQ(g.match("test "), false);
+}
+TEST(GuesserTest, closeButWhitespace2)
+{
+	Guesser g("test");
+	ASSERT_EQ(g.match(" test"), false);
+}
+TEST(GuesserTest, closeButWhitespace3)
+{
+	Guesser g("test");
+	ASSERT_EQ(g.match("te st"), false);
+}
+TEST(GuesserTest, closeButCapital)
+{
+	Guesser g("desperation");
+	ASSERT_EQ(g.match("desperAtion"), false);
+}
+TEST(GuesserTest, remNotNeg)
+{
+	Guesser g("plywood");
+	ASSERT_EQ(g.match("dakota"), false);
+	ASSERT_EQ(g.match("montana"), false);
+	ASSERT_EQ(g.match("vermont"), false);
+	ASSERT_EQ(g.match("mississippi"), false);
+	ASSERT_EQ(g.match("nevada"), false);
+	ASSERT_EQ(g.match("california"), false);
+	ASSERT_EQ(g.match("oregon"), false);
+	ASSERT_EQ(g.remaining(), 0);
 }

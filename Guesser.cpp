@@ -17,7 +17,7 @@ using std::string;
 unsigned int Guesser::distance(string guess)
 {
   unsigned int diff = m_secret.length() - guess.length();
-  if (diff > 10) diff = 10;
+  if (diff > m_secret.length()) diff = m_secret.length();
   int it = std::max(m_secret.length(), guess.length());
   int dis = 0;
   for (int i = 0; i < it; i++) 
@@ -35,6 +35,7 @@ unsigned int Guesser::distance(string guess)
 */
 Guesser::Guesser(string secret){
     m_secret = secret;
+    if (m_secret.length() > 32) { m_secret = m_secret.substr(0, 32); }
     m_remaining = 3;
 }
 
