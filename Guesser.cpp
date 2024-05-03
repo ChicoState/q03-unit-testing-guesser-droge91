@@ -14,8 +14,17 @@ using std::string;
   the secret; in other words, if m_secret has a 10 characters and the guess
   has 100, the distance is 10.
 */
-unsigned int Guesser::distance(string guess){
-  return 0;
+unsigned int Guesser::distance(string guess)
+{
+  unsigned int diff = m_secret.length() - guess.length();
+  if (diff > 10) diff = 10;
+  int it = std::max(m_secret.length(), guess.length());
+  int dis = 0;
+  for (int i = 0; i < it; i++) 
+  {
+      if (m_secret[i] != guess[i]) dis++;
+  }
+  return dis + diff;
 }
 
 /*
@@ -25,7 +34,8 @@ unsigned int Guesser::distance(string guess){
   otherwise, it will be truncated at that length.
 */
 Guesser::Guesser(string secret){
-
+    m_secret = secret;
+    m_remaining = 3;
 }
 
 /*
@@ -39,8 +49,13 @@ Guesser::Guesser(string secret){
   determining how many guesses are remaining and the distance between a guess
   and the secret.
 */
-bool Guesser::match(string guess){
-  return true;
+bool Guesser::match(string guess)
+{
+    if (m_remaining == 0) { return false; }
+    --m_remaining;
+    if (distance(guess) > 2) { return false; }
+    if (guess == m_secret) { m_remaining = 3; return true; }
+    return false;
 }
 
 /*
@@ -51,6 +66,6 @@ bool Guesser::match(string guess){
   reset to three (3).
 */
 unsigned int Guesser::remaining(){
-  return 0;
+  return m_remaining;
 }
 
